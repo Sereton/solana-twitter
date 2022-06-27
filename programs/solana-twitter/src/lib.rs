@@ -14,18 +14,18 @@ pub mod solana_twitter {
 
         if topic.chars().count() > 50 {
         // Return a error...
-            return err(ErrorCode::TopicTooLong.into());
+            return Err(ErrorCode::TopicTooLong.into());
         }
 
-        if content.chars().count() > 280 {
+        if body.chars().count() > 280 {
         // Return a too-long-body error...
-            return err(ErrorCode::BodyTooLong.into());
+            return Err(ErrorCode::BodyTooLong.into());
         }
 
         tweet.author = *author.key;
         tweet.timestamp = clock.unix_timestamp;
         tweet.topic = topic;
-        tweet.body = tweet;
+        tweet.body = body;
         Ok(())
     }
 }
@@ -36,14 +36,14 @@ pub struct SendTweet<'info> {
     pub tweet: Account<'info, Tweet>,
     #[account(mut)] 
     pub author: Signer<'info>,
-    pub system_program: AccountInfo<'info, System>,
+    pub system_program: Program<'info, System>,
 }
 
 
 #[account]
 pub struct Tweet {
     pub author: Pubkey,
-    pub timestamp: u64,
+    pub timestamp: i64,
     pub topic: String,
     pub body: String,
 }
@@ -64,5 +64,5 @@ pub enum ErrorCode {
     #[msg("The provided topic should be 50 characters long maximum.")]
     TopicTooLong,
     #[msg("The provided content should be 280 characters long maximum.")]
-    ContentTooLong,
+    BodyTooLong,
 }
